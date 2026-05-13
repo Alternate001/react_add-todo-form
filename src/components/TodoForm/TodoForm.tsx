@@ -1,19 +1,5 @@
 import React, { useState } from 'react';
-
-type User = {
-  id: number;
-  name: string;
-  username: string;
-  email: string;
-};
-
-interface Todo {
-  id: number;
-  title: string;
-  completed: boolean;
-  userId: number;
-  user: User;
-}
+import type { Todo, User } from '../../types';
 
 type Props = {
   todos: Todo[];
@@ -27,7 +13,7 @@ export const TodoForm: React.FC<Props> = ({ todos, users, onAdd }) => {
   const [title, setTitle] = useState('');
   const [selectedUser, setSelectedUser] = useState('');
   const selectedUserObj = users.find(
-    (u: User) => u.id === Number(selectedUser),
+    (user: User) => user.id === Number(selectedUser),
   )!;
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -55,6 +41,7 @@ export const TodoForm: React.FC<Props> = ({ todos, users, onAdd }) => {
   return (
     <form action="/api/todos" method="POST" onSubmit={handleSubmit}>
       <div className="field">
+        <label htmlFor="todo-title">Title:</label>
         <input
           type="text"
           data-cy="titleInput"
@@ -70,15 +57,16 @@ export const TodoForm: React.FC<Props> = ({ todos, users, onAdd }) => {
       </div>
 
       <div className="field">
+        <label htmlFor="todo-user">User:</label>
         <select
           data-cy="userSelect"
-          value={selectedUser || '0'}
+          value={selectedUser}
           onChange={event => {
             setSelectedUser(event.target.value);
             setUserError(false);
           }}
         >
-          <option value="0" disabled>
+          <option value="" disabled>
             Choose a user
           </option>
           {users.map(user => (

@@ -5,24 +5,10 @@ import todosFromServer from './api/todos';
 import usersFromServer from './api/users';
 import { useState } from 'react';
 import { TodoForm } from './components/TodoForm/TodoForm';
-
-type User = {
-  id: number;
-  name: string;
-  username: string;
-  email: string;
-};
-
-type Todo = {
-  id: number;
-  title: string;
-  completed: boolean;
-  userId: number;
-  user: User;
-};
+import type { Todo } from './types';
 
 export const App = () => {
-  const [todos, setTodos] = useState(
+  const [todos, setTodos] = useState<Todo[]>(
     todosFromServer.map(todo => ({
       ...todo,
       user: usersFromServer.find(user => user.id === todo.userId)!,
@@ -30,7 +16,7 @@ export const App = () => {
   );
 
   const addTodo = (newTodo: Todo): void => {
-    setTodos([...todos, newTodo]);
+    setTodos(currentTodos => [...currentTodos, newTodo]);
   };
 
   return (
