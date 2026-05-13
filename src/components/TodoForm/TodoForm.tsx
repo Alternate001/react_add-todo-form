@@ -16,6 +16,22 @@ export const TodoForm: React.FC<Props> = ({ todos, users, onAdd }) => {
     (user: User) => user.id === Number(selectedUser),
   )!;
 
+  const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(event.target.value);
+
+    if (titleError) {
+      setTitleError(false);
+    }
+  };
+
+  const handleUserChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedUser(event.target.value);
+
+    if (userError) {
+      setUserError(false);
+    }
+  };
+
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -24,6 +40,10 @@ export const TodoForm: React.FC<Props> = ({ todos, users, onAdd }) => {
 
     setTitleError(hasTitleError);
     setUserError(hasUserError);
+
+    if (hasTitleError || hasUserError) {
+      return;
+    }
 
     if (!hasTitleError && !hasUserError && selectedUserObj) {
       onAdd({
@@ -45,15 +65,11 @@ export const TodoForm: React.FC<Props> = ({ todos, users, onAdd }) => {
         <input
           type="text"
           data-cy="titleInput"
-          value={title || ''}
-          onChange={event => {
-            setTitle(event.target.value);
-            setTitleError(false);
-          }}
+          placeholder="Enter a title"
+          value={title}
+          onChange={handleTitleChange}
         />
-        <span className="error" hidden={!titleError}>
-          Please enter a title
-        </span>
+        {titleError && <span className="error">Please enter a title</span>}
       </div>
 
       <div className="field">
@@ -61,10 +77,7 @@ export const TodoForm: React.FC<Props> = ({ todos, users, onAdd }) => {
         <select
           data-cy="userSelect"
           value={selectedUser}
-          onChange={event => {
-            setSelectedUser(event.target.value);
-            setUserError(false);
-          }}
+          onChange={handleUserChange}
         >
           <option value="" disabled>
             Choose a user
@@ -76,9 +89,7 @@ export const TodoForm: React.FC<Props> = ({ todos, users, onAdd }) => {
           ))}
         </select>
 
-        <span className="error" hidden={!userError}>
-          Please choose a user
-        </span>
+        {userError && <span className="error">Please choose a user</span>}
       </div>
 
       <button type="submit" data-cy="submitButton">
